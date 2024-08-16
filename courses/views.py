@@ -1,10 +1,12 @@
 from rest_framework.generics import (CreateAPIView, DestroyAPIView,
                                      ListAPIView, RetrieveAPIView,
                                      UpdateAPIView)
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
 from courses.models import Course, Lesson
 from courses.serializers import CourseSerializer, LessonSerializer, CourseDetailSerializer
+from users.permissions import IsModer, IsOwner
 
 
 class CourseViewSet(ModelViewSet):
@@ -15,10 +17,27 @@ class CourseViewSet(ModelViewSet):
             return CourseDetailSerializer
         return CourseSerializer
 
+    def perform_create(self, serializer):
+        course = serializer.save()
+        course.owner = self.request.user
+        course.save()
+
+    def get_permission(self):
+        if self.request.user.groups.filter(name="moders").exists():
+            if self.action in ["create", "destroy"]:
+                self.permission_classes = (~IsModer,)
+            elif self.action in ["update", "retrieve"]:
+                self.permission_classes = (IsModer,)
+        elif self.action != "create":
+            self.permission_classes = (IsOwner,)
+
+
+
 
 class LessonCreateAPIView(CreateAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+    permission_classes = (~IsModer, IsAuthenticated, IsOwner)
 
 
 class LessonListAPIView(ListAPIView):
@@ -39,3 +58,12 @@ class LessonUpdateAPIView(UpdateAPIView):
 class LessonDestroyAPIView(DestroyAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
+
+    def get_permissions(self):
+        if self.request.user.groups.filter(name="moders").exists():
+            self.permission_classes = (~IsModer, IsAuthenticated)
+        else:
+            self.permission_classes = (IsOwner, IsAuthenticated)
+
+        return super().get_permissions()
+
