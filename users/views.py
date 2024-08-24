@@ -5,8 +5,8 @@ from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView,
 from rest_framework.permissions import AllowAny
 from rest_framework.viewsets import ModelViewSet
 
-from users.models import User, Payments
-from users.serializers import UserSerializer, PaymentsSerializer
+from users.models import User, Payments, Subscriptions
+from users.serializers import UserSerializer, PaymentsSerializer, SubscriptionsSerializer
 
 
 class UserViewSet(ModelViewSet):
@@ -71,3 +71,14 @@ class PaymentsUpdateAPIView(UpdateAPIView):
 class PaymentsDestroyAPIView(DestroyAPIView):
     queryset = Payments.objects.all()
     serializer_class = PaymentsSerializer
+
+
+class SubscriptionsCreateAPIView(CreateAPIView):
+    queryset = Subscriptions.objects.all()
+    serializer_class = SubscriptionsSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+class SubscriptionsDestroyAPIView(DestroyAPIView):
+    queryset = Subscriptions.objects.all()

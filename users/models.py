@@ -55,3 +55,17 @@ class Payments(models.Model):
 
     def __str__(self):
         return f"{self.user} ({self.course if self.course else self.lesson} - {self.payment_amount})"
+
+
+class Subscriptions(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="Пользователь подписки",
+                              help_text="Укажите пользователя подписки", related_name="subscriber")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Подписанный курс",
+                               help_text="Укажите подписанный курс", related_name="subscribed_course")
+
+    class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+
+    def __str__(self):
+        return f"{self.user} ({self.course})"
