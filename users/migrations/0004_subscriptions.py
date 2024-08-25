@@ -8,21 +8,47 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('courses', '0004_course_owner_lesson_owner'),
-        ('users', '0003_payments'),
+        ("courses", "0004_course_owner_lesson_owner"),
+        ("users", "0003_payments"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Subscriptions',
+            name="Subscriptions",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('course', models.ForeignKey(help_text='Укажите подписанный курс', on_delete=django.db.models.deletion.CASCADE, related_name='subscribed_course', to='courses.course', verbose_name='Подписанный курс')),
-                ('user', models.ForeignKey(help_text='Укажите пользователя подписки', on_delete=django.db.models.deletion.CASCADE, related_name='subscriber', to=settings.AUTH_USER_MODEL, verbose_name='Пользователь подписки')),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "course",
+                    models.ForeignKey(
+                        help_text="Укажите подписанный курс",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="subscribed_course",
+                        to="courses.course",
+                        verbose_name="Подписанный курс",
+                    ),
+                ),
+                (
+                    "user",
+                    models.ForeignKey(
+                        help_text="Укажите пользователя подписки",
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="subscriber",
+                        to=settings.AUTH_USER_MODEL,
+                        verbose_name="Пользователь подписки",
+                    ),
+                ),
             ],
             options={
-                'verbose_name': 'Подписка',
-                'verbose_name_plural': 'Подписки',
+                "verbose_name": "Подписка",
+                "verbose_name_plural": "Подписки",
             },
         ),
     ]

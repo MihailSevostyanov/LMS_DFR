@@ -1,12 +1,24 @@
-from django.shortcuts import render
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters
-from rest_framework.generics import ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView
+from rest_framework.generics import (
+    CreateAPIView,
+    DestroyAPIView,
+    ListAPIView,
+    RetrieveAPIView,
+    UpdateAPIView,
+    get_object_or_404,
+)
 from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from users.models import User, Payments, Subscriptions
-from users.serializers import UserSerializer, PaymentsSerializer, SubscriptionsSerializer
+from courses.models import Course
+from users.models import Payments, Subscriptions, User
+from users.serializers import (
+    PaymentsSerializer,
+    SubscriptionsSerializer,
+    UserSerializer,
+)
 
 
 class UserViewSet(ModelViewSet):
@@ -79,6 +91,21 @@ class SubscriptionsCreateAPIView(CreateAPIView):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    def post(self, request, *args, **kwargs):
+        user = self.request.user
+        course_id = self.request.data.get("course")
+        course = get_object_or_404(Course, pk=course_id)
+
+        subs_item = Subscriptions.objects.filter(user=user, course=course)
+        if subs_item.exists():
+            subs_item.delete()
+            message = "Подписка удалена"
+        else:
+            Subscriptions.objects.create(user=user, course=course)
+            message = "Подписка создана"
+        return Response({"message": message})
+
 
 class SubscriptionsDestroyAPIView(DestroyAPIView):
     queryset = Subscriptions.objects.all()

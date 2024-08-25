@@ -1,6 +1,6 @@
 from rest_framework.serializers import ModelSerializer
 
-from users.models import User, Payments, Subscriptions
+from users.models import Payments, Subscriptions, User
 
 
 class UserSerializer(ModelSerializer):

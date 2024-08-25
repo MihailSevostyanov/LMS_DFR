@@ -1,33 +1,40 @@
-from rest_framework.reverse import reverse
 from django.urls import reverse
 from rest_framework import status
+from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-from courses.models import Lesson, Course
-from users.models import User, Subscriptions
+from courses.models import Course, Lesson
+from users.models import Subscriptions, User
+
 
 class SubscriptionsTestCase(APITestCase):
 
     def setUp(self):
         self.user = User.objects.create(email="admin@sky.pro")
 
-        self.course = Course.objects.create(title='Курс номер 1', description='Описание курса номер 1',  owner=self.user)
+        self.course = Course.objects.create(
+            title="Курс номер 1", description="Описание курса номер 1", owner=self.user
+        )
 
         video = "https://www.youtube.com/watch?v=uC0jJGfDxtM&list=PLlb7e2G7aSpTFea2FYxp7mFfbZW-xavhL&index=1"
 
-        self.lesson = Lesson.objects.create(title='Урок номер 1', course=self.course , description="описание" , video_url=video, owner=self.user)
+        self.lesson = Lesson.objects.create(
+            title="Урок номер 1",
+            course=self.course,
+            description="описание",
+            video_url=video,
+            owner=self.user,
+        )
 
         self.client.force_authenticate(user=self.user)
 
-        self.subscriptions = Subscriptions.objects.create(user=self.user, course=self.course)
+        self.subscriptions = Subscriptions.objects.create(
+            user=self.user, course=self.course
+        )
 
     def test_subscription_create(self):
         url = reverse("users:subscriptions-create")
-        data = {
-            "user": self.user.pk,
-            "course": self.course.pk
-                }
-
+        data = {"user": self.user.pk, "course": self.course.pk}
 
         response = self.client.post(url, data)
 

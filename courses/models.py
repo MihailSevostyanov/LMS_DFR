@@ -24,7 +24,8 @@ class Course(models.Model):
         AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name="Владелец курса",
-        help_text="Выберите владельца курса", **NULLABLE
+        help_text="Выберите владельца курса",
+        **NULLABLE,
     )
 
     def __str__(self):
@@ -47,7 +48,7 @@ class Lesson(models.Model):
         on_delete=models.CASCADE,
         verbose_name="Курс",
         help_text="Выберите курс",
-        related_name='course',
+        related_name="course",
         **NULLABLE,
     )
     description = models.TextField(
@@ -69,7 +70,8 @@ class Lesson(models.Model):
         AUTH_USER_MODEL,
         on_delete=models.CASCADE,
         verbose_name="Владелец урока",
-        help_text="Выберите владельца урока", **NULLABLE
+        help_text="Выберите владельца урока",
+        **NULLABLE,
     )
 
     def __str__(self):
