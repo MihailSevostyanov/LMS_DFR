@@ -19,7 +19,7 @@ from users.serializers import (
     SubscriptionsSerializer,
     UserSerializer,
 )
-from users.services import create_stripe_session, create_stripe_price
+from users.services import create_stripe_price, create_stripe_session
 
 
 class UserViewSet(ModelViewSet):
@@ -78,7 +78,6 @@ class PaymentsCreateAPIView(CreateAPIView):
         payment.session_id = session_id
         payment.link = payment_link
         payment.save()
-
 
 
 class PaymentsRetrieveAPIView(RetrieveAPIView):

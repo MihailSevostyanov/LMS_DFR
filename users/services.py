@@ -1,16 +1,8 @@
 import stripe
+
 from config.settings import STRIPE_API_KEY
 
 stripe.api_key = STRIPE_API_KEY
-
-
-def create_stripe_price(amount):
-    """Создает цену в страйпе"""
-    return stripe.Price.create(
-        currency="usd",
-        unit_amount=amount * 100,
-        product_data={"name": "Gold Plan"},
-    )
 
 
 def create_stripe_product(instance):
@@ -20,6 +12,15 @@ def create_stripe_product(instance):
     )
     stripe_product = stripe.Product.create(name=f"{title_product}")
     return stripe_product.get("id")
+
+
+def create_stripe_price(amount):
+    """Создает цену в страйпе"""
+    return stripe.Price.create(
+        currency="usd",
+        unit_amount=amount * 100,
+        product_data={"name": "Gold Plan"},
+    )
 
 
 def create_stripe_session(price):
