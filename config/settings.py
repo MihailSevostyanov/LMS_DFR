@@ -156,7 +156,7 @@ LOGOUT_REDIRECT_URL = "/"
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=5),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    'UPDATE_LAST_LOGIN': True
+    "UPDATE_LAST_LOGIN": True,
 }
 
 STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
@@ -168,19 +168,20 @@ CELERY_TASK_TIME_LIMIT = 30 * 60
 
 CELERY_BROKER_URI = "redis://localhost:6379/0"
 CELERY_RESULT_BACKEND = "redis://localhost:6379/0"
-CELERY_BEAT_SCHEDULE = {"block_users_who_was_absent_last_mount": {
+CELERY_BEAT_SCHEDULE = {
+    "block_users_who_was_absent_last_mount": {
         "task": "courses.tasks.block_users_who_was_absent_last_mount",
         "schedule": timedelta(minutes=1),  # Run every day at 00:00
-        "kwargs": {"block_absent": True, "timedelta_days": 30}
+        "kwargs": {"block_absent": True, "timedelta_days": 30},
     }
 }
 
-EMAIL_HOST = os.getenv('EMAIL_HOST')
-EMAIL_PORT = os.getenv('EMAIL_PORT')
-EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
-EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', False) == 'True'
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', False) == 'True'
+EMAIL_HOST = os.getenv("EMAIL_HOST")
+EMAIL_PORT = os.getenv("EMAIL_PORT")
+EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+EMAIL_USE_TLS = os.getenv("EMAIL_USE_TLS", False) == "True"
+EMAIL_USE_SSL = os.getenv("EMAIL_USE_SSL", False) == "True"
 
 SERVER_EMAIL = EMAIL_HOST_USER
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
