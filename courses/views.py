@@ -1,3 +1,6 @@
+from datetime import datetime, timedelta
+
+import pytz
 from rest_framework.generics import (
     CreateAPIView,
     DestroyAPIView,
@@ -8,6 +11,7 @@ from rest_framework.generics import (
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet
 
+from config import settings
 from courses.models import Course, Lesson
 from courses.paginators import CustomOffsetPagination, CustomPagination
 from courses.serializers import (
@@ -48,6 +52,22 @@ class LessonCreateAPIView(CreateAPIView):
     serializer_class = LessonSerializer
     permission_classes = (~IsModer, IsAuthenticated, IsOwner)
 
+    def perform_create(self, serializer):
+        new_lesson = serializer.save(owner=self.request.user)
+        # new_lesson = serializer.save()
+
+        zone = pytz.timezone(settings.TIME_ZONE)
+        current_datetime_4_hours_ago = datetime.now(zone) - timedelta(hours=4)
+
+        if new_lesson.course.updated_at < current_datetime_4_hours_ago:
+            print(f"last_upd {new_lesson.course.updated_at}, -4h {current_datetime_4_hours_ago}")
+
+            send_information_about_course_update.delay(new_lesson.course.pk)
+
+        course = Course.objects.get(course=new_lesson.course.pk)
+        print(course)
+        course.save()
+
 
 class LessonListAPIView(ListAPIView):
     queryset = Lesson.objects.all()
@@ -62,6 +82,20 @@ class LessonRetrieveAPIView(RetrieveAPIView):
         IsAuthenticated,
         IsModer | IsOwner,
     )
+
+    def perform_update(self, serializer):
+        new_lesson = serializer.save()
+
+        zone = pytz.timezone(settings.TIME_ZONE)
+        current_datetime_4_hours_ago = datetime.now(zone) - timedelta(hours=4)
+
+        if new_lesson.course.updated_at < current_datetime_4_hours_ago:
+            print(f"last_upd {new_lesson.course.updated_at}, -4h {current_datetime_4_hours_ago}")
+
+            send_information_about_course_update.delay(new_lesson.course.pk)
+
+        course = Course.objects.get(course=new_lesson.course.pk)
+        course.save()
 
 
 class LessonUpdateAPIView(UpdateAPIView):
